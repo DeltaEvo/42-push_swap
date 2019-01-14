@@ -1,0 +1,4 @@
+%clang
+
+-Iinclude
+-Ilibft/include
