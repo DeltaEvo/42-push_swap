@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/14 15:15:40 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/15 16:28:23 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,12 @@ int					main(int ac, char *av[])
 	while (--ac)
 		stack_a->elems[stack_a->size - ac] = atoi(av[ac]);
 	stdin = init_readable(fill_fd, (void *)0, buffer, sizeof(buffer));
+	//display(OP_NONE, stack_a, stack_b);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
 	{
 		exec_op(op, stack_a, stack_b);
-		display(op, stack_a, stack_b);
-		usleep(500000);
+		//display(op, stack_a, stack_b);
+		//usleep(500000);
 	}
 	if (op == OP_INVALID)
 		return (write(2, ERROR, sizeof(ERROR) - 1));
