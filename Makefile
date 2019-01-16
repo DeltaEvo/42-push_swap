@@ -6,11 +6,11 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 16:01:17 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/01/14 14:47:21 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/01/16 15:51:58 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include -g
+CFLAGS=-Wall -Wextra -Iinclude -Ilibft/include -g
 CC=gcc
 
 include src.mk

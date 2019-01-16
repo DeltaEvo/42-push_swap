@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:48:40 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/15 16:11:48 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/16 11:02:57 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void			display(enum e_op op, struct s_stack *a, struct s_stack *b)
 {
 	int			i;
 
-	/*if (op != OP_NONE)
-		ft_putf(isatty(0) ? ANSI_ESC "4A" : ANSI_ESC "3A");*/
+	if (op != OP_NONE)
+		ft_putf(isatty(0) ? ANSI_ESC "4A" : ANSI_ESC "3A");
 	ft_putf(ANSI_CLEAR "" ANSI_CYAN "Stack A" ANSI_RESET ":");
 	i = a->size;
 	while (--i >= 0)
