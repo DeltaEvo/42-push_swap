@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checker.h                                          :+:      :+:    :+:   */
+/*   vm.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/14 14:42:19 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/14 14:57:17 by dde-jesu         ###   ########.fr       */
+/*   Created: 2019/01/21 09:57:23 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/01/21 10:12:03 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CHECKER_H
-# define CHECKER_H
+#ifndef VM_H
+# define VM_H
 # include <stddef.h>
 
 enum 	e_op {
@@ -35,7 +35,12 @@ struct	s_stack {
 	int		elems[];
 };
 
-void	display(enum e_op op, struct s_stack *a, struct s_stack *b);
-void	exec_op(enum e_op op, struct s_stack *a, struct s_stack *b);
+struct	s_stacks {
+	struct s_stack	*a;
+	struct s_stack	*b;
+};
+
+void			exec_op(enum e_op op, struct s_stack *a, struct s_stack *b);
+struct s_stacks	collect(int ac, char *av[]);
 
 #endif

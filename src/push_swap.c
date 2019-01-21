@@ -6,10 +6,12 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/16 16:14:21 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/21 12:02:33 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "vm.h"
+#include "display.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,118 +32,130 @@ int	*collect_args(size_t size, char *nums[])
 	return res;
 }
 
-size_t	min(size_t a, size_t b)
+enum e_direction {
+	A,
+	B
+};
+
+void	exec_and_print(enum e_op op, struct s_stacks stacks)
 {
-	return (a > b ? b : a);
+	exec_op(op, stacks.a, stacks.b);
+	//display(op, stacks.a, stacks.b);
+	printf("%s\n", op_to_str(op));
 }
 
-void	merge(int *n, size_t start, size_t mid, size_t end, int *tmp)
+void	sort_2(struct s_stacks stacks, enum e_direction to)
 {
-	const size_t	l_size = mid - start;
-	const size_t	r_size = end - mid;
-	size_t			i;
+	const size_t	first = stacks.a->elems[stacks.a->size - 1];
+	const size_t	second = stacks.a->elems[stacks.a->size - 2];
 
-	if ((end - start) == 1)
+	if (to == A && first > second)
+		exec_and_print(OP_SA, stacks);
+	if (to == B)
 	{
-		printf("ra\n");
+		if (second > first)
+			exec_and_print(OP_SA, stacks);
+		exec_and_print(OP_PB, stacks);
+		exec_and_print(OP_PB, stacks);
+	}
+}
+
+int		head(struct s_stack *stack)
+{
+	return stack->elems[stack->size - 1];
+}
+
+void	merge(struct s_stacks stacks, enum e_direction to, size_t count_b, size_t count_a)
+{
+	const size_t	target_len_b = stacks.b->size - count_b;
+	const size_t	target_len_a = stacks.a->size - count_a;
+	size_t			rotates;
+
+	rotates = 0;
+	if (to == A)
+	{
+		while (rotates < count_a && stacks.b->size > target_len_b)
+		{
+			if (head(stacks.b) < head(stacks.a))
+			{
+				count_a++;
+				exec_and_print(OP_PA, stacks);
+			}
+			else
+			{
+				rotates++;
+				exec_and_print(OP_RA, stacks);
+			}
+		}
+		while (stacks.b->size > target_len_b)
+		{
+			exec_and_print(OP_PA, stacks);
+			exec_and_print(OP_RA, stacks);
+			rotates++;	
+		}
+	}
+	if (to == B)
+	{
+		while (rotates < count_b && stacks.a->size > target_len_a)
+		{
+			if (head(stacks.a) < head(stacks.b))
+			{
+				count_b++;
+				exec_and_print(OP_PB, stacks);
+			}
+			else
+			{
+				rotates++;	
+				exec_and_print(OP_RB, stacks);
+			}
+		}
+		while (stacks.a->size > target_len_a)
+		{
+			exec_and_print(OP_PB, stacks);
+			exec_and_print(OP_RB, stacks);
+			rotates++;	
+		}
+	}
+	while (rotates > 0)
+	{
+		exec_and_print(to == A ? OP_RRA : OP_RRB, stacks);
+		rotates--;
+	}
+}
+
+void	subsort(struct s_stacks stacks, enum e_direction to, size_t count)
+{
+	const size_t	mid = count / 2;
+	if (count == 2)
+	{
+		//printf("Special sort 2 to %c\n", to == A ? 'a' : 'b');
+		sort_2(stacks, to);
 		return ;
 	}
-	//fprintf(stderr, "Size: %zu, %zu -> %zu\n", end - start, start, end);
-	//fprintf(stderr, "Mid: %zu, LSize: %zu, RSize: %zu\n", mid, l_size, r_size);
-	if ((end - start) == 2)
+	else if (count <= 1)
 	{
-		if (n[start] > n[end-1])
+		if (to == B)
 		{
-			printf("sa\n");
-			*tmp = n[end - 1];
-			n[end - 1] = n[start];
-			n[start] = *tmp;
+			//printf("Move to B\n");
+			exec_and_print(OP_PB, stacks);
 		}
-		printf("ra\n");
-		printf("ra\n");
 		return ;
 	}
-	i = 0;
-	while (i < l_size)
-	{
-		printf("pb\n");
-		printf("rb\n");
-		tmp[i] = n[start + i];
-		i++;
-	}
-	i = 0;
-	while (i < r_size)
-	{
-		tmp[l_size + i] = n[mid + i];
-		i++;
-	}
-
-	size_t j = 0;
-	size_t k = start;
-	i = 0;
-
-	while (i < l_size && j < r_size)
-	{
-		if (tmp[i] <= tmp[l_size + j])
-		{
-			printf("pa\n");
-			n[k] = tmp[i];
-			i++;
-		}
-		else
-		{
-			n[k] = tmp[l_size + j];
-			j++;
-		}
-		printf("ra\n");
-		k++;
-	}
-
-	while (i < l_size)
-	{
-		printf("pa\n");
-		printf("ra\n");
-		n[k] = tmp[i];
-		i++;
-		k++;
-	}
-
-	while (j < r_size)
-	{
-		printf("ra\n");
-		n[k] = tmp[l_size + j];
-		j++;
-		k++;
-	}
+	subsort(stacks, B, mid);
+	subsort(stacks, A, count - mid);
+	//printf("Subsort to: %c, size: %zu\n", to == A ? 'a' : 'b', count);
+	merge(stacks, to, mid, count - mid);
 }
 
-void	sort(int *n, size_t size)
+void	sort(struct s_stacks stacks)
 {
-	size_t	curr_size;
-	size_t	start;
-	size_t	end;
-	int		*tmp;
-
-	curr_size = 1;
-	tmp = malloc(size * sizeof(int));
-	while (curr_size < size)
-	{
-		start = 0;
-		while (start < size)
-		{
-			end = min(start + 2 * curr_size, size);
-			merge(n, start, min(start + curr_size, end), end, tmp);
-			start += 2 * curr_size;
-		}		
-		curr_size = 2 * curr_size;
-	}
+	subsort(stacks, A, stacks.a->size);
 }
 
-int	main(int ac, char *av[])
+int		main(int ac, char *av[])
 {
-	int	*list;
-	//size_t i;
+	struct s_stacks	stacks;
 
-	list = collect_args(ac - 1, av + 1);	
-	sort(list, ac - 1);
+	stacks = collect(ac, av);
+	sort(stacks);
 }

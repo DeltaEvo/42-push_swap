@@ -6,14 +6,13 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/16 16:14:47 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/21 12:03:08 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "checker.h"
+#include "display.h"
 #include "ft/io.h"
 #include "ft/mem.h"
-#include <stdlib.h>
 #include <stdbool.h>
 
 static enum e_op	read_op_next(t_readable *in, char buffer[3])
@@ -77,25 +76,19 @@ int					main(int ac, char *av[])
 	t_readable		stdin;
 	uint8_t			buffer[4096];
 	enum e_op		op;
-	struct s_stack	*stack_a;
-	struct s_stack	*stack_b;
+	struct s_stacks	stacks;
 
-	stack_a = malloc(sizeof(*stack_a) + (ac - 1) * sizeof(int));
-	stack_b = malloc(sizeof(*stack_b) + (ac - 1) * sizeof(int));
-	stack_a->size = ac - 1;
-	stack_b->size = 0;
-	while (--ac)
-		stack_a->elems[stack_a->size - ac] = atoi(av[ac]);
+	stacks = collect(ac, av);
 	stdin = init_readable(fill_fd, (void *)0, buffer, sizeof(buffer));
-	//display(OP_NONE, stack_a, stack_b);
+//	display(OP_NONE, stacks.a, stacks.b);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
 	{
-		exec_op(op, stack_a, stack_b);
-	//	display(op, stack_a, stack_b);
+		exec_op(op, stacks.a, stacks.b);
+//		display(op, stacks.a, stacks.b);
 	//	usleep(500000);
 	}
 	if (op == OP_INVALID)
 		return (write(2, ERROR, sizeof(ERROR) - 1));
-	write(1, stack_b->size == 0 && is_sorted(stack_a) ? "OK\n" : "KO\n", 3);
+	write(1, stacks.b->size == 0 && is_sorted(stacks.a) ? "OK\n" : "KO\n", 3);
 	return (0);
 }

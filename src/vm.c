@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   vm.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:56:50 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/14 14:58:03 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/21 10:13:20 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "checker.h"
+#include "vm.h"
+#include <stdlib.h>
 
 static void	swap(int *a, int *b)
 {
@@ -46,6 +47,20 @@ static void	rotate(struct s_stack *stack)
 	while (--i)
 		stack->elems[i] = stack->elems[i - 1];
 	stack->elems[0] = tmp;
+}
+
+struct s_stacks	collect(int ac, char *av[])
+{
+	const size_t	len = ac - 1;
+	struct s_stacks	stacks;
+
+	stacks.a = malloc(sizeof(*stacks.a) + len * sizeof(int));
+	stacks.b = malloc(sizeof(*stacks.b) + len * sizeof(int));
+	stacks.a->size = len;
+	stacks.b->size = 0;
+	while (--ac)
+		stacks.a->elems[len - ac] = atoi(av[ac]);
+	return (stacks);
 }
 
 void		exec_op(enum e_op op, struct s_stack *a, struct s_stack *b)
