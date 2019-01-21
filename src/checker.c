@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/21 12:03:08 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/21 14:25:12 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,12 @@ int					main(int ac, char *av[])
 
 	stacks = collect(ac, av);
 	stdin = init_readable(fill_fd, (void *)0, buffer, sizeof(buffer));
-//	display(OP_NONE, stacks.a, stacks.b);
+	display(OP_NONE, stacks.a, stacks.b);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
 	{
 		exec_op(op, stacks.a, stacks.b);
-//		display(op, stacks.a, stacks.b);
-	//	usleep(500000);
+		display(op, stacks.a, stacks.b);
+		usleep(5000);
 	}
 	if (op == OP_INVALID)
 		return (write(2, ERROR, sizeof(ERROR) - 1));

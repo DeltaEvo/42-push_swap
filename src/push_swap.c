@@ -6,12 +6,13 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/21 12:02:33 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/21 14:21:06 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vm.h"
 #include "display.h"
+#include "optimiser.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,9 +40,10 @@ enum e_direction {
 
 void	exec_and_print(enum e_op op, struct s_stacks stacks)
 {
+	push_op(op, stacks);
 	exec_op(op, stacks.a, stacks.b);
 	//display(op, stacks.a, stacks.b);
-	printf("%s\n", op_to_str(op));
+	//printf("%s\n", op_to_str(op));
 }
 
 void	sort_2(struct s_stacks stacks, enum e_direction to)
@@ -158,4 +160,5 @@ int		main(int ac, char *av[])
 
 	stacks = collect(ac, av);
 	sort(stacks);
+	push_op(OP_NONE, stacks);
 }
