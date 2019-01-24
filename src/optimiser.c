@@ -6,29 +6,26 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 11:45:23 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/21 14:11:43 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/24 14:18:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "optimiser.h"
 #include "vm.h"
 #include "display.h"
 #include "ft/io.h"
 #include <unistd.h>
-#include <stdbool.h>
-#include <stdlib.h>
 
-struct s_optimiser_state {
-	ssize_t		a_pos;
-	ssize_t		b_pos;
-};
-
-
-void	go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
+static size_t ft_abs(ssize_t a)
 {
-	//dist %= size;
-	if (labs(dist) > labs(dist - (ssize_t)size))
+	return (a > 0 ? a : -a);
+}
+
+static void	go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
+{
+	if (ft_abs(dist) > ft_abs(dist - (ssize_t)size))
 		dist -= size;
-	if (labs(dist) > labs(dist + (ssize_t)size))
+	if (ft_abs(dist) > ft_abs(dist + (ssize_t)size))
 		dist += size;
 	while (dist)
 	{
@@ -37,8 +34,8 @@ void	go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
 	}
 }
 
-
-static void flush_ops(enum e_op op, struct s_optimiser_state *state, struct s_stacks stacks)
+static void	flush_ops(enum e_op op, struct s_optimiser_state *state,
+		struct s_stacks stacks)
 {
 	if (stacks.a->size)
 		go_to(state->a_pos, stacks.a->size, OP_RA, OP_RRA);
@@ -50,7 +47,7 @@ static void flush_ops(enum e_op op, struct s_optimiser_state *state, struct s_st
 		ft_putf("%s\n", op_to_str(op));
 }
 
-void	push_op(enum e_op op, struct s_stacks stacks)
+void		push_op(enum e_op op, struct s_stacks stacks)
 {
 	static struct s_optimiser_state state = { 0, 0 };
 
@@ -62,6 +59,7 @@ void	push_op(enum e_op op, struct s_stacks stacks)
 		state.a_pos--;
 	if (op == OP_RRB || op == OP_RRR)
 		state.b_pos--;
-	if (op == OP_PA || op == OP_PB || op == OP_NONE || op == OP_SA || op == OP_SS || op == OP_SB)
+	if (op == OP_PA || op == OP_PB || op == OP_NONE
+		|| op == OP_SA || op == OP_SS || op == OP_SB)
 		flush_ops(op, &state, stacks);
 }

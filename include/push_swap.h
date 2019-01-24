@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   optimiser.h                                        :+:      :+:    :+:   */
+/*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/01/21 13:52:59 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/24 14:18:30 by dde-jesu         ###   ########.fr       */
+/*   Created: 2019/01/24 14:17:06 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/01/24 14:18:40 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef OPTIMISER_H
-# define OPTIMISER_H
-# include "vm.h"
-# include <unistd.h>
+#ifndef PUSH_SWAP_H
+# define PUSH_SWAP_H
 
-struct s_optimiser_state {
-	ssize_t		a_pos;
-	ssize_t		b_pos;
+enum	e_direction {
+	A,
+	B
 };
-
-void push_op(enum e_op op, struct s_stacks stacks);
 
 #endif

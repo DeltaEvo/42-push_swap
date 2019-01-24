@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:48:40 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/22 12:03:49 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/24 14:13:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 #define OP_HEADER ANSI_CLEAR ANSI_CYAN "OP" ANSI_RESET ": " ANSI_YELLOW
 
-char		*op_to_str(enum e_op op)
+char	*op_to_str(enum e_op op)
 {
 	static char		*name[] = {
 		[OP_SA] = "sa",
@@ -44,7 +44,7 @@ char		*op_to_str(enum e_op op)
 	return (op <= OP_RRR ? name[op] : NULL);
 }
 
-void			display(enum e_op op, struct s_stack *a, struct s_stack *b)
+void	display(enum e_op op, struct s_stack *a, struct s_stack *b)
 {
 	int			i;
 

@@ -6,10 +6,11 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/22 12:08:08 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/24 14:17:39 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "push_swap.h"
 #include "vm.h"
 #include "display.h"
 #include "optimiser.h"
@@ -18,7 +19,7 @@
 #include <string.h>
 #include "ft/io.h"
 
-int	*collect_args(size_t size, char *nums[])
+int		*collect_args(size_t size, char *nums[])
 {
 	int		*res;
 	size_t	i;
@@ -31,13 +32,8 @@ int	*collect_args(size_t size, char *nums[])
 		res[i] = atoi(nums[i]);
 		i++;
 	}
-	return res;
+	return (res);
 }
-
-enum e_direction {
-	A,
-	B
-};
 
 void	exec_and_print(enum e_op op, struct s_stacks stacks)
 {
@@ -63,7 +59,7 @@ void	sort_2(struct s_stacks stacks, enum e_direction to)
 
 int		head(struct s_stack *stack)
 {
-	return stack->elems[stack->size - 1];
+	return (stack->elems[stack->size - 1]);
 }
 
 void	merge(struct s_stacks stacks, enum e_direction to, size_t count_b, size_t count_a)
@@ -120,33 +116,21 @@ void	merge(struct s_stacks stacks, enum e_direction to, size_t count_b, size_t c
 	}
 }
 
-void	subsort(struct s_stacks stacks, enum e_direction to, size_t count)
+void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
 {
 	const size_t	mid = count / 2;
+
 	if (count == 2)
-	{
-	//	ft_putf("Special sort 2 to %c\n", to == A ? 'a' : 'b');
-		sort_2(stacks, to);
-		return ;
-	}
+		return (sort_2(stacks, to));
 	else if (count <= 1)
 	{
 		if (to == B)
-		{
-	//		ft_putf("Move to B\n");
 			exec_and_print(OP_PB, stacks);
-		}
 		return ;
 	}
-	subsort(stacks, B, mid);
-	subsort(stacks, A, count - mid);
-	//ft_putf("Subsort to: %c, size: %d\n", to == A ? 'a' : 'b', count);
+	sort(stacks, B, mid);
+	sort(stacks, A, count - mid);
 	merge(stacks, to, mid, count - mid);
-}
-
-void	sort(struct s_stacks stacks)
-{
-	subsort(stacks, A, stacks.a->size);
 }
 
 int		main(int ac, char *av[])
@@ -154,6 +138,6 @@ int		main(int ac, char *av[])
 	struct s_stacks	stacks;
 
 	stacks = collect(ac, av);
-	sort(stacks);
+	sort(stacks, A, stacks.a->size);
 	push_op(OP_NONE, stacks);
 }

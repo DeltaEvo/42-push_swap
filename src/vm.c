@@ -6,14 +6,14 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:56:50 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/21 10:13:20 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/24 14:14:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vm.h"
 #include <stdlib.h>
 
-static void	swap(int *a, int *b)
+static void		swap(int *a, int *b)
 {
 	int	tmp;
 
@@ -22,7 +22,7 @@ static void	swap(int *a, int *b)
 	*b = tmp;
 }
 
-static void	rotate_reverse(struct s_stack *stack)
+static void		rotate_reverse(struct s_stack *stack)
 {
 	size_t	i;
 	int		tmp;
@@ -37,7 +37,7 @@ static void	rotate_reverse(struct s_stack *stack)
 	stack->elems[stack->size - 1] = tmp;
 }
 
-static void	rotate(struct s_stack *stack)
+static void		rotate(struct s_stack *stack)
 {
 	size_t	i;
 	int		tmp;
@@ -63,7 +63,7 @@ struct s_stacks	collect(int ac, char *av[])
 	return (stacks);
 }
 
-void		exec_op(enum e_op op, struct s_stack *a, struct s_stack *b)
+void			exec_op(enum e_op op, struct s_stack *a, struct s_stack *b)
 {
 	if ((op == OP_SS || op == OP_SA) && a->size >= 2)
 		swap(a->elems + a->size - 1, a->elems + a->size - 2);
