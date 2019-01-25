@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/25 09:20:27 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/25 13:00:30 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "ft/io.h"
 #include "ft/mem.h"
 #include <stdbool.h>
+#include <fcntl.h>
 
 static enum e_op	read_op_next(t_readable *in, char buffer[3])
 {
@@ -80,16 +81,17 @@ static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
 
 	stdin = init_readable(fill_fd, (void *)fd, buffer, sizeof(buffer));
 	if (visual)
-		display(OP_NONE, stacks.a, stacks.b);
+		display(OP_NONE, stacks.a, stacks.b, fd);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
 	{
 		exec_op(op, stacks.a, stacks.b);
 		if (visual)
 		{
-			display(op, stacks.a, stacks.b);
+			display(op, stacks.a, stacks.b, fd);
 			usleep(500000);
 		}
 	}
+	close(fd);
 	if (op == OP_INVALID)
 		return ((write(2, ERROR, sizeof(ERROR) - 1) & 0) + 1);
 	if (stacks.b->size == 0 && is_sorted(stacks.a))
@@ -102,17 +104,17 @@ int					main(int argc, char *argv[])
 {
 	int				ret;
 	bool			visual;
-	int				fd;
+	char			*file;
 	struct s_stacks	stacks;
 	const t_arg		args[] = {
 		{ ARG_BOOLEAN, 'v', "visual", &visual, "Visual" },
-		{ ARG_INTEGER, 'f', "file", &visual, "Read from file" },
+		{ ARG_STRING, 'f', "file", &file, "Read from file" },
 		{ ARG_END, 0, 0, 0, 0 }};
 
 	visual = false;
-	fd = 0;
+	file = NULL;
 	if ((ret = parse_args(args, argc, argv)) < 0)
 		return (args_usage(args, argv[0], "", "") || 1);
 	stacks = collect(argc - (ret - 1), argv + (ret - 1));
-	return (run((uintptr_t)fd, visual, stacks));
+	return (run(file ? (uintptr_t)open(file, O_RDONLY) : 0, visual, stacks));
 }

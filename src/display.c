@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:48:40 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/24 14:13:09 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/25 12:57:10 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ char	*op_to_str(enum e_op op)
 	return (op <= OP_RRR ? name[op] : NULL);
 }
 
-void	display(enum e_op op, struct s_stack *a, struct s_stack *b)
+void	display(enum e_op op, struct s_stack *a, struct s_stack *b, int fd)
 {
 	int			i;
 
 	if (op != OP_NONE)
-		ft_putf(isatty(0) ? ANSI_ESC "4A" : ANSI_ESC "3A");
+		ft_putf(isatty(fd) ? ANSI_ESC "4A" : ANSI_ESC "3A");
 	ft_putf(ANSI_CLEAR "" ANSI_CYAN "Stack A" ANSI_RESET ":");
 	i = a->size;
 	while (--i >= 0)
