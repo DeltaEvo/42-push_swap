@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/25 09:05:10 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/25 14:47:04 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,13 @@
 #include <string.h>
 #include "ft/io.h"
 
-int		*collect_args(size_t size, char *nums[])
-{
-	int		*res;
-	size_t	i;
-
-	if (!(res = malloc(size * sizeof(int))))
-		return (NULL);
-	i = 0;
-	while (i < size)
-	{
-		res[i] = atoi(nums[i]);
-		i++;
-	}
-	return (res);
-}
-
-void	exec_and_print(enum e_op op, struct s_stacks stacks)
+static void	exec_and_print(enum e_op op, struct s_stacks stacks)
 {
 	push_op(op, stacks);
 	exec_op(op, stacks.a, stacks.b);
 }
 
-void	sort_2(struct s_stacks stacks, enum e_direction to)
+static void	sort_2(struct s_stacks stacks, enum e_direction to)
 {
 	const size_t	first = stacks.a->elems[stacks.a->size - 1];
 	const size_t	second = stacks.a->elems[stacks.a->size - 2];
@@ -57,66 +41,37 @@ void	sort_2(struct s_stacks stacks, enum e_direction to)
 	}
 }
 
-int		head(struct s_stack *stack)
+static void	merge(struct s_stacks stacks, enum e_direction to,
+		size_t cb, size_t ca)
 {
-	return (stack->elems[stack->size - 1]);
-}
-
-void	merge(struct s_stacks stacks, enum e_direction to, size_t count_b, size_t count_a)
-{
-	const size_t	target_len_b = stacks.b->size - count_b;
-	const size_t	target_len_a = stacks.a->size - count_a;
-	size_t			rotates;
+	const struct s_stack	*stack_c = to == A ? stacks.a : stacks.b;
+	const struct s_stack	*stack_o = to == A ? stacks.b : stacks.a;
+	const size_t			count = to == A ? ca : cb;
+	const size_t			target_len_o = stack_o->size - (to == A ? cb : ca);
+	size_t					rotates;
 
 	rotates = 0;
-	if (to == A)
+	while (rotates < count)
 	{
-		while (rotates < count_a)
-		{
-			exec_and_print(OP_RA, stacks);
-			rotates++;
-		}
-		while (rotates && stacks.b->size > target_len_b)
-		{
-			if (head(stacks.b) > stacks.a->elems[0])
-				exec_and_print(OP_PA, stacks);
-			else
-			{
-				rotates--;
-				exec_and_print(OP_RRA, stacks);
-			}
-		}
-		while (stacks.b->size > target_len_b)
-			exec_and_print(OP_PA, stacks);
+		exec_and_print(to == A ? OP_RA : OP_RB, stacks);
+		rotates++;
 	}
-	if (to == B)
-	{
-		while (rotates < count_b)
+	while (rotates && stack_o->size > target_len_o)
+		if (to == A ? stack_o->elems[stack_o->size - 1] > stack_c->elems[0]
+					: stack_o->elems[stack_o->size - 1] < stack_c->elems[0])
+			exec_and_print(to == A ? OP_PA : OP_PB, stacks);
+		else
 		{
-			exec_and_print(OP_RB, stacks);
-			rotates++;
+			rotates--;
+			exec_and_print(to == A ? OP_RRA : OP_RRB, stacks);
 		}
-		while (rotates && stacks.a->size > target_len_a)
-		{
-			if (head(stacks.a) < stacks.b->elems[0])
-				exec_and_print(OP_PB, stacks);
-			else
-			{
-				rotates--;
-				exec_and_print(OP_RRB, stacks);
-			}
-		}
-		while (stacks.a->size > target_len_a)
-			exec_and_print(OP_PB, stacks);
-	}
-	while (rotates)
-	{
+	while (stack_o->size > target_len_o)
+		exec_and_print(to == A ? OP_PA : OP_PB, stacks);
+	while (rotates--)
 		exec_and_print(to == A ? OP_RRA : OP_RRB, stacks);
-		rotates--;
-	}
 }
 
-void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
+static void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
 {
 	const size_t	mid = count / 2;
 
@@ -133,7 +88,7 @@ void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
 	merge(stacks, to, mid, count - mid);
 }
 
-int		main(int ac, char *av[])
+int			main(int ac, char *av[])
 {
 	struct s_stacks	stacks;
 
