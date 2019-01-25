@@ -6,11 +6,12 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/24 14:12:49 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/25 09:20:27 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "display.h"
+#include "ft/args.h"
 #include "ft/io.h"
 #include "ft/mem.h"
 #include <stdbool.h>
@@ -71,24 +72,47 @@ static bool			is_sorted(struct s_stack *stack)
 
 #define ERROR "Error\n"
 
-int					main(int ac, char *av[])
+static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
 {
 	t_readable		stdin;
 	uint8_t			buffer[4096];
 	enum e_op		op;
-	struct s_stacks	stacks;
 
-	stacks = collect(ac, av);
-	stdin = init_readable(fill_fd, (void *)0, buffer, sizeof(buffer));
-//	display(OP_NONE, stacks.a, stacks.b);
+	stdin = init_readable(fill_fd, (void *)fd, buffer, sizeof(buffer));
+	if (visual)
+		display(OP_NONE, stacks.a, stacks.b);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
 	{
 		exec_op(op, stacks.a, stacks.b);
-//		display(op, stacks.a, stacks.b);
-//		usleep(500000);
+		if (visual)
+		{
+			display(op, stacks.a, stacks.b);
+			usleep(500000);
+		}
 	}
 	if (op == OP_INVALID)
-		return (write(2, ERROR, sizeof(ERROR) - 1));
-	write(1, stacks.b->size == 0 && is_sorted(stacks.a) ? "OK\n" : "KO\n", 3);
-	return (0);
+		return ((write(2, ERROR, sizeof(ERROR) - 1) & 0) + 1);
+	if (stacks.b->size == 0 && is_sorted(stacks.a))
+		return (write(1, "OK\n", 3) & 0);
+	else
+		return ((write(1, "KO\n", 3) & 0) + 1);
+}
+
+int					main(int argc, char *argv[])
+{
+	int				ret;
+	bool			visual;
+	int				fd;
+	struct s_stacks	stacks;
+	const t_arg		args[] = {
+		{ ARG_BOOLEAN, 'v', "visual", &visual, "Visual" },
+		{ ARG_INTEGER, 'f', "file", &visual, "Read from file" },
+		{ ARG_END, 0, 0, 0, 0 }};
+
+	visual = false;
+	fd = 0;
+	if ((ret = parse_args(args, argc, argv)) < 0)
+		return (args_usage(args, argv[0], "", "") || 1);
+	stacks = collect(argc - (ret - 1), argv + (ret - 1));
+	return (run((uintptr_t)fd, visual, stacks));
 }

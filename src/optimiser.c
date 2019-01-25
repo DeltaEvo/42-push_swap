@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 11:45:23 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/24 14:18:09 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/01/24 14:22:01 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 #include "ft/io.h"
 #include <unistd.h>
 
-static size_t ft_abs(ssize_t a)
+static size_t	ft_abs(ssize_t a)
 {
 	return (a > 0 ? a : -a);
 }
 
-static void	go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
+static void		go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
 {
 	if (ft_abs(dist) > ft_abs(dist - (ssize_t)size))
 		dist -= size;
@@ -34,7 +34,7 @@ static void	go_to(ssize_t dist, size_t size, enum e_op op, enum e_op rev)
 	}
 }
 
-static void	flush_ops(enum e_op op, struct s_optimiser_state *state,
+static void		flush_ops(enum e_op op, struct s_optimiser_state *state,
 		struct s_stacks stacks)
 {
 	if (stacks.a->size)
@@ -47,7 +47,7 @@ static void	flush_ops(enum e_op op, struct s_optimiser_state *state,
 		ft_putf("%s\n", op_to_str(op));
 }
 
-void		push_op(enum e_op op, struct s_stacks stacks)
+void			push_op(enum e_op op, struct s_stacks stacks)
 {
 	static struct s_optimiser_state state = { 0, 0 };
 
