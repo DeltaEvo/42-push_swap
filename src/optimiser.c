@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 11:45:23 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/24 14:22:01 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/04 11:07:47 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,10 @@ void			push_op(enum e_op op, struct s_stacks stacks)
 {
 	static struct s_optimiser_state state = { 0, 0 };
 
+	if (op == OP_SA && stacks.a->size <= 2)
+		op = OP_RA;
+	if (op == OP_SB && stacks.b->size <= 2)
+		op = OP_RB;
 	if (op == OP_RA || op == OP_RR)
 		state.a_pos++;
 	if (op == OP_RB || op == OP_RR)

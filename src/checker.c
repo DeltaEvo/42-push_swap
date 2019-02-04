@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/25 13:00:30 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/04 11:28:38 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,20 +57,6 @@ static enum e_op	read_op(t_readable *in)
 	return (read_op_next(in, buffer));
 }
 
-static bool			is_sorted(struct s_stack *stack)
-{
-	size_t	i;
-
-	i = 1;
-	while (i < stack->size)
-	{
-		if (stack->elems[i - 1] < stack->elems[i])
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 #define ERROR "Error\n"
 
 static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
@@ -100,6 +86,8 @@ static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
 		return ((write(1, "KO\n", 3) & 0) + 1);
 }
 
+#define ERROR "Error\n"
+
 int					main(int argc, char *argv[])
 {
 	int				ret;
@@ -115,6 +103,13 @@ int					main(int argc, char *argv[])
 	file = NULL;
 	if ((ret = parse_args(args, argc, argv)) < 0)
 		return (args_usage(args, argv[0], "", "") || 1);
+	if (argc == ret)
+		return (0);
 	stacks = collect(argc - (ret - 1), argv + (ret - 1));
+	if (!stacks.a || !stacks.b)
+	{
+		write(1, ERROR, sizeof(ERROR) - 1);
+		return (1);
+	}
 	return (run(file ? (uintptr_t)open(file, O_RDONLY) : 0, visual, stacks));
 }

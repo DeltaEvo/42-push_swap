@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/01/25 14:47:04 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/01 10:00:49 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,23 @@ static void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
 	merge(stacks, to, mid, count - mid);
 }
 
+#define ERROR "Error\n"
+
 int			main(int ac, char *av[])
 {
 	struct s_stacks	stacks;
 
 	stacks = collect(ac, av);
-	sort(stacks, A, stacks.a->size);
-	push_op(OP_NONE, stacks);
+	if (!stacks.a || !stacks.b)
+	{
+		write(1, ERROR, sizeof(ERROR) - 1);
+		return (1);
+	}
+	if (!is_sorted(stacks.a))
+	{
+		sort(stacks, A, stacks.a->size);
+		push_op(OP_NONE, stacks);
+	}
+	free(stacks.a);
+	free(stacks.b);
 }
