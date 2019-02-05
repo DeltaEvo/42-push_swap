@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/21 11:45:23 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/04 11:07:47 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/05 10:24:23 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void		flush_ops(enum e_op op, struct s_optimiser_state *state,
 		ft_putf("%s\n", op_to_str(op));
 }
 
-void			push_op(enum e_op op, struct s_stacks stacks)
+static void		push_op(enum e_op op, struct s_stacks stacks)
 {
 	static struct s_optimiser_state state = { 0, 0 };
 
@@ -66,4 +66,10 @@ void			push_op(enum e_op op, struct s_stacks stacks)
 	if (op == OP_PA || op == OP_PB || op == OP_NONE
 		|| op == OP_SA || op == OP_SS || op == OP_SB)
 		flush_ops(op, &state, stacks);
+}
+
+void			push_and_exec_op(enum e_op op, struct s_stacks stacks)
+{
+	push_op(op, stacks);
+	exec_op(op, stacks.a, stacks.b);
 }

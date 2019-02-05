@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/01 10:00:49 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/05 10:21:05 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,28 @@
 #include "optimiser.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include "ft/io.h"
 
-static void	exec_and_print(enum e_op op, struct s_stacks stacks)
+static void	sort_3el(struct s_stacks stacks)
 {
-	push_op(op, stacks);
-	exec_op(op, stacks.a, stacks.b);
+	const int	first = stacks.a->elems[2];
+	const int	second = stacks.a->elems[1];
+	const int	third = stacks.a->elems[0];
+
+	if (first > second && second < third && first < third)
+		push_and_exec_op(OP_SA, stacks);
+	else if (first < second && third < first)
+		push_and_exec_op(OP_RRA, stacks);
+	else if (first > second && second < third)
+		push_and_exec_op(OP_RA, stacks);
+	else if (first > second && second > third)
+		push_and_exec_op(OP_SA, stacks);
+	else if (first > second && second < third)
+		push_and_exec_op(OP_RRA, stacks);
+	else if (first < second && second > third && first < third)
+		push_and_exec_op(OP_RRA, stacks);
+	else
+		return ;
+	sort_3el(stacks);
 }
 
 static void	sort_2(struct s_stacks stacks, enum e_direction to)
@@ -31,13 +46,13 @@ static void	sort_2(struct s_stacks stacks, enum e_direction to)
 	const size_t	second = stacks.a->elems[stacks.a->size - 2];
 
 	if (to == A && first > second)
-		exec_and_print(OP_SA, stacks);
+		push_and_exec_op(OP_SA, stacks);
 	if (to == B)
 	{
-		exec_and_print(OP_PB, stacks);
-		exec_and_print(OP_PB, stacks);
+		push_and_exec_op(OP_PB, stacks);
+		push_and_exec_op(OP_PB, stacks);
 		if (first > second)
-			exec_and_print(OP_SB, stacks);
+			push_and_exec_op(OP_SB, stacks);
 	}
 }
 
@@ -53,22 +68,22 @@ static void	merge(struct s_stacks stacks, enum e_direction to,
 	rotates = 0;
 	while (rotates < count)
 	{
-		exec_and_print(to == A ? OP_RA : OP_RB, stacks);
+		push_and_exec_op(to == A ? OP_RA : OP_RB, stacks);
 		rotates++;
 	}
 	while (rotates && stack_o->size > target_len_o)
 		if (to == A ? stack_o->elems[stack_o->size - 1] > stack_c->elems[0]
 					: stack_o->elems[stack_o->size - 1] < stack_c->elems[0])
-			exec_and_print(to == A ? OP_PA : OP_PB, stacks);
+			push_and_exec_op(to == A ? OP_PA : OP_PB, stacks);
 		else
 		{
 			rotates--;
-			exec_and_print(to == A ? OP_RRA : OP_RRB, stacks);
+			push_and_exec_op(to == A ? OP_RRA : OP_RRB, stacks);
 		}
 	while (stack_o->size > target_len_o)
-		exec_and_print(to == A ? OP_PA : OP_PB, stacks);
+		push_and_exec_op(to == A ? OP_PA : OP_PB, stacks);
 	while (rotates--)
-		exec_and_print(to == A ? OP_RRA : OP_RRB, stacks);
+		push_and_exec_op(to == A ? OP_RRA : OP_RRB, stacks);
 }
 
 static void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
@@ -80,7 +95,7 @@ static void	sort(struct s_stacks stacks, enum e_direction to, size_t count)
 	else if (count <= 1)
 	{
 		if (to == B)
-			exec_and_print(OP_PB, stacks);
+			push_and_exec_op(OP_PB, stacks);
 		return ;
 	}
 	sort(stacks, B, mid);
@@ -102,8 +117,11 @@ int			main(int ac, char *av[])
 	}
 	if (!is_sorted(stacks.a))
 	{
-		sort(stacks, A, stacks.a->size);
-		push_op(OP_NONE, stacks);
+		if (stacks.a->size == 3)
+			sort_3el(stacks);
+		else
+			sort(stacks, A, stacks.a->size);
+		push_and_exec_op(OP_NONE, stacks);
 	}
 	free(stacks.a);
 	free(stacks.b);
