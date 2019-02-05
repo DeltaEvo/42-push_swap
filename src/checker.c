@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/04 11:28:38 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/05 10:45:12 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "ft/mem.h"
 #include <stdbool.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 static enum e_op	read_op_next(t_readable *in, char buffer[3])
 {
@@ -59,31 +60,39 @@ static enum e_op	read_op(t_readable *in)
 
 #define ERROR "Error\n"
 
+static void			exec_and_show(enum e_op op, struct s_stacks stacks,
+		bool visual, int fd)
+{
+	exec_op(op, stacks.a, stacks.b);
+	if (visual)
+	{
+		display(op, stacks.a, stacks.b, fd);
+		usleep(500000);
+	}
+}
+
 static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
 {
 	t_readable		stdin;
 	uint8_t			buffer[4096];
 	enum e_op		op;
+	int				ret;
 
 	stdin = init_readable(fill_fd, (void *)fd, buffer, sizeof(buffer));
 	if (visual)
 		display(OP_NONE, stacks.a, stacks.b, fd);
 	while ((op = read_op(&stdin)) != OP_NONE && op != OP_INVALID)
-	{
-		exec_op(op, stacks.a, stacks.b);
-		if (visual)
-		{
-			display(op, stacks.a, stacks.b, fd);
-			usleep(500000);
-		}
-	}
+		exec_and_show(op, stacks, visual, (int)fd);
 	close(fd);
 	if (op == OP_INVALID)
-		return ((write(2, ERROR, sizeof(ERROR) - 1) & 0) + 1);
+		ret = (write(2, ERROR, sizeof(ERROR) - 1) & 0) + 1;
 	if (stacks.b->size == 0 && is_sorted(stacks.a))
-		return (write(1, "OK\n", 3) & 0);
+		ret = write(1, "OK\n", 3) & 0;
 	else
-		return ((write(1, "KO\n", 3) & 0) + 1);
+		ret = (write(1, "KO\n", 3) & 0) + 1;
+	free(stacks.a);
+	free(stacks.b);
+	return (ret);
 }
 
 #define ERROR "Error\n"
