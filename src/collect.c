@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 09:40:06 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/04 11:36:21 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/05 10:50:10 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ struct s_stacks	collect(int ac, char *av[])
 			free(stacks.b);
 			stacks.a = NULL;
 			stacks.b = NULL;
-			break ;
+			return (stacks);
 		}
 	return (check_duplicates(stacks));
 }
