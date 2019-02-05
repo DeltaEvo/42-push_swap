@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:19:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/05 10:45:12 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/05 10:52:44 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ static int			run(uintptr_t fd, bool visual, struct s_stacks stacks)
 	close(fd);
 	if (op == OP_INVALID)
 		ret = (write(2, ERROR, sizeof(ERROR) - 1) & 0) + 1;
-	if (stacks.b->size == 0 && is_sorted(stacks.a))
+	else if (stacks.b->size == 0 && is_sorted(stacks.a))
 		ret = write(1, "OK\n", 3) & 0;
 	else
 		ret = (write(1, "KO\n", 3) & 0) + 1;
