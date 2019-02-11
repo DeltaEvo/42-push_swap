@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/01 09:40:06 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/05 10:50:10 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/11 11:12:50 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static bool		ft_atoi(const char *str, int *res)
 	}
 	if (*str != '\0')
 		return (false);
-	*res = result;
+	*res = (mod ? -result : result);
 	return (true);
 }
 
