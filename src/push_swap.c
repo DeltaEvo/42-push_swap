@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/01/14 14:58:24 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/02/05 10:21:05 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/02/22 15:00:05 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ static void	sort_3el(struct s_stacks stacks)
 
 static void	sort_2(struct s_stacks stacks, enum e_direction to)
 {
-	const size_t	first = stacks.a->elems[stacks.a->size - 1];
-	const size_t	second = stacks.a->elems[stacks.a->size - 2];
+	const int	first = stacks.a->elems[stacks.a->size - 1];
+	const int	second = stacks.a->elems[stacks.a->size - 2];
 
 	if (to == A && first > second)
 		push_and_exec_op(OP_SA, stacks);

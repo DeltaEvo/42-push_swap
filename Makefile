@@ -6,7 +6,7 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/06 16:01:17 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/02/05 10:43:17 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/02/22 15:00:25 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,6 @@ fclean: clean
 	$(MAKE) -C libft fclean
 	rm -rf checker push_swap
 
-re: fclean $(NAME)
+re: fclean all
 
 .PHONY: clean fclean re all
